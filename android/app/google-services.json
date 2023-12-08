@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "182053667659",
+    "project_id": "auth-ocr",
+    "storage_bucket": "auth-ocr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182053667659:android:06d7e81ea318183ad51ece",
+        "android_client_info": {
+          "package_name": "com.example.ocr_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR7xM6WG7u4ice7cHIbXxWxDUTXnW0Bfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ocr_app/pages/home_screen.dart';
+// import 'package:ocr_app/pages/home_screen.dart';
 import 'package:ocr_app/pages/signin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';

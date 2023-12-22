@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ocr_app/components/reusable_widget.dart';
+import 'package:ocr_app/pages/bottom_navbar.dart';
 import 'package:ocr_app/pages/signup_screen.dart';
-import 'package:ocr_app/pages/home_screen.dart';
+// import 'package:ocr_app/pages/home_screen.dart';
 import 'package:ocr_app/pages/reset_password.dart';
 import 'package:ocr_app/utils/color_utils.dart';
 
@@ -39,15 +40,16 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 20,
                 ),
                 reusableTextField(
-                    "Username", Icons.person_outline, false, _emailController),
+                    "Email", Icons.person_outline, false, _emailController),
                 const SizedBox(
                   height: 20,
                 ),
                 reusableTextField(
                     "Password", Icons.lock_outline, true, _passwordController),
                 const SizedBox(
-                  height: 30,
+                  height: 5,
                 ),
+                forgetPassword(context),
                 firebaseUIButton(context, "Sign In", () {
                   FirebaseAuth.instance
                       .signInWithEmailAndPassword(
@@ -57,7 +59,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
+                            builder: (context) => const Navbar()));
                   }).onError((error, stackTrace) {});
                 }),
                 signUpOption(),
@@ -74,7 +76,7 @@ class _SignInScreenState extends State<SignInScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text("Don't have account?",
-            style: TextStyle(color: Colors.white70)),
+            style: TextStyle(color: Colors.black87)),
         GestureDetector(
           onTap: () {
             Navigator.push(context,
@@ -82,7 +84,8 @@ class _SignInScreenState extends State<SignInScreen> {
           },
           child: const Text(
             "Sign Up",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
           ),
         )
       ],
@@ -97,7 +100,7 @@ class _SignInScreenState extends State<SignInScreen> {
       child: TextButton(
         child: const Text(
           "Forgot Password?",
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(color: Colors.black54),
           textAlign: TextAlign.right,
         ),
         onPressed: () => Navigator.push(context,

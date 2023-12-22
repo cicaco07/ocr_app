@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ocr_app/components/reusable_widget.dart';
-import 'package:ocr_app/pages/home_screen.dart';
+import 'package:ocr_app/pages/bottom_navbar.dart';
+// import 'package:ocr_app/pages/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocr_app/utils/color_utils.dart';
 
@@ -56,7 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              reusableTextField("Password", Icons.lock_outline, false,
+              reusableTextField("Password", Icons.lock_outline, true,
                   _passwordTextController),
               const SizedBox(
                 height: 20,
@@ -67,10 +68,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         email: _emailTextController.text,
                         password: _passwordTextController.text)
                     .then((value) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Navbar()));
                 }).onError((error, stackTrace) {});
               }),
             ]),

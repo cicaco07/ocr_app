@@ -1,7 +1,8 @@
-// import 'package:ocr_app/pages/bottom_navbar.dart';
-// import 'package:ocr_app/pages/navbar.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:ocr_app/utils/color_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,6 +13,121 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  File? _image;
+  String _result = "";
+
+  Future<void> _uploadImage() async {
+    if (_image == null) {
+      return Future.value(); // Added return statement here
+    }
+
+    String apiUrl = "http://192.168.209.85:5000/result";
+    var uri = Uri.parse(apiUrl);
+
+    var request = http.MultipartRequest("POST", uri);
+    request.files.add(await http.MultipartFile.fromPath('file', _image!.path));
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        var responseBody = await response.stream.bytesToString();
+        var result = json.decode(responseBody);
+
+        setState(() {
+          _result = jsonEncode(result);
+        });
+
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Hasil OCR"),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildField("NIK", result['nik']),
+                    buildField("Nama", result['nama']),
+                    buildField("Tempat/Tgl Lahir", result['tempatTglLahir']),
+                    buildField("Jenis Kelamin", result['jenisKelamin']),
+                    buildField("Gol. Darah", result['golDarah']),
+                    buildField("Alamat", result['alamat']),
+                    buildField("RT/RW", result['rtRw']),
+                    buildField("Kel/Desa", result['kelDesa']),
+                    buildField("Kecamatan", result['kecamatan']),
+                    buildField("Agama", result['agama']),
+                    buildField("Status Perkawinan", result['statusPerkawinan']),
+                    buildField("Pekerjaan", result['pekerjaan']),
+                    buildField("Kewarganegaraan", result['kewarganegaraan']),
+                    buildField("Berlaku Hingga", result['berlakuHingga']),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        print("Error: ${response.reasonPhrase}");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
+
+    // Add the following return statement to address the warning
+    return Future.value();
+  }
+
+  Widget buildField(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(fontSize: 16.0, color: Colors.black),
+          children: [
+            TextSpan(
+              text: "$label: ",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(text: value),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _getImage() async {
+    var pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  Widget _buildImageDisplay() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _image == null
+              ? const Text("Pilih gambar KTP terlebih dahulu")
+              : Image.file(_image!),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,19 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    child: Container(
-                        // decoration: BoxDecoration(
-                        //   gradient: LinearGradient(
-                        //       colors: [
-                        //         hexStringToColor("FEEA37"),
-                        //         hexStringToColor("FFFFFF"),
-                        //         hexStringToColor("FFFFFF"),
-                        //         hexStringToColor("FFFFFF"),
-                        //       ],
-                        //       begin: Alignment.topCenter,
-                        //       end: Alignment.bottomLeft),
-                        // ),
-                        ),
+                    child: Container(),
                   ),
                   Column(
                     children: [
@@ -83,66 +187,82 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     margin: const EdgeInsets.only(left: 20, bottom: 20),
                     padding: const EdgeInsets.only(top: 10),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.camera,
-                              size: 60,
-                              color: Colors.amber,
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Scan Image",
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.42,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        _getImage();
+                        setState(() {});
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.camera,
+                                size: 60,
+                                color: Colors.amber,
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Import Image",
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                        ),
-                      ],
-                    ),
-                    margin: const EdgeInsets.only(right: 20, bottom: 20),
-                    padding: const EdgeInsets.only(top: 10),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.camera_enhance,
-                              size: 60,
-                              color: Colors.amber,
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Import Image",
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black),
-                            )
-                          ],
-                        ),
-                      ],
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () {
+                      if (_image == null) {
+                        _getImage();
+                      } else {
+                        _uploadImage();
+                        setState(() {});
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.42,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Colors.grey.withOpacity(0.5),
+                          width: 1.0,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                          ),
+                        ],
+                      ),
+                      margin: const EdgeInsets.only(right: 20, bottom: 20),
+                      padding: const EdgeInsets.only(top: 10),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.camera_enhance,
+                                size: 60,
+                                color: Colors.amber,
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                "Scan Image",
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               ),
               Column(
@@ -153,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: Text(
-                          "Terkini, ",
+                          "Hasil OCR, ",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -167,122 +287,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: 130,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    colors: <Color>[
-                      Color(0xffff0000),
-                      Color(0xffDE1F1F),
-                      Color(0xffd03131),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
+                height: 50,
                 margin: const EdgeInsets.all(20),
-                padding: const EdgeInsets.only(left: 20, top: 15),
+                padding: const EdgeInsets.only(left: 20),
                 child: const Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        // SizedBox(
-                        //   height: 20,
-                        //   child: Text(
-                        //     "Hi, ARYO DEVA SAPUTRA",
-                        //     style: TextStyle(
-                        //       color: Colors.white,
-                        //       letterSpacing: 0.5,
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
+                      children: [],
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 10),
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.start,
-                    //   children: [
-                    //     Container(
-                    //       height: 60,
-                    //       width: 130,
-                    //       decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(5),
-                    //         color: const Color(0xffffffff),
-                    //       ),
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.only(left: 10),
-                    //         child: Column(
-                    //           mainAxisAlignment: MainAxisAlignment.center,
-                    //           crossAxisAlignment: CrossAxisAlignment.start,
-                    //           children: [
-                    //             const Text(
-                    //               "Your Balance",
-                    //               style: TextStyle(fontSize: 10),
-                    //             ),
-                    //             const SizedBox(height: 5),
-                    //             Row(
-                    //               children: [
-                    //                 const Text(
-                    //                   "Rp 15.000",
-                    //                   style: TextStyle(
-                    //                       fontWeight: FontWeight.bold,
-                    //                       fontSize: 12),
-                    //                 ),
-                    //                 const SizedBox(width: 5),
-                    //                 Image.asset('assets/icons/right-arrow.png',
-                    //                     width: 12),
-                    //                 const SizedBox(width: 5),
-                    //               ],
-                    //             )
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     const SizedBox(width: 10),
-                    //     Container(
-                    //       height: 60,
-                    //       width: 130,
-                    //       decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(5),
-                    //         color: const Color(0xffffffff),
-                    //       ),
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.only(left: 10),
-                    //         child: Column(
-                    //           mainAxisAlignment: MainAxisAlignment.center,
-                    //           crossAxisAlignment: CrossAxisAlignment.start,
-                    //           children: [
-                    //             const Text(
-                    //               "Bonus Balance",
-                    //               style: TextStyle(fontSize: 10),
-                    //             ),
-                    //             const SizedBox(height: 5),
-                    //             Row(
-                    //               children: [
-                    //                 const Text(
-                    //                   "0",
-                    //                   style: TextStyle(
-                    //                       fontWeight: FontWeight.bold,
-                    //                       fontSize: 12),
-                    //                 ),
-                    //                 const SizedBox(width: 5),
-                    //                 Image.asset('assets/icons/right-arrow.png',
-                    //                     width: 12),
-                    //                 const SizedBox(width: 5),
-                    //               ],
-                    //             )
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     const SizedBox(width: 10),
-                    //   ],
-                    // )
                   ],
                 ),
               ),
+              _buildImageDisplay(),
             ],
           ),
         ],

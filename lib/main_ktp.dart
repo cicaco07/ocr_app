@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
-  
+
 void main() {
   runApp(const MyApp());
 }
@@ -39,7 +38,7 @@ class MyHomePageState extends State<MyHomePage> {
       return Future.value(); // Added return statement here
     }
 
-    String apiUrl = "http://agungal.pythonanywhere.com/result";
+    String apiUrl = "http://192.168.209.85:5000/result";
     var uri = Uri.parse(apiUrl);
 
     var request = http.MultipartRequest("POST", uri);

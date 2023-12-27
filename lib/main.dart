@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'OCR App asu',
+      title: 'OCR App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

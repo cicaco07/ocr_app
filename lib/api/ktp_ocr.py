@@ -45,59 +45,59 @@ def main(image):
     berlakuHingga = ""
 
     # Extract information based on patterns in OCR result
-    nik_match = re.search(r"NIK : (.+)", result) or re.search(r"NIK — : (.+)", result)
+    nik_match = re.search(r"NIK : (.+)", result) or re.search(r"NIK — : (.+)", result) or re.search(r"NIK '(.+)", result) or re.search(r"NIK: (.+)", result) or re.search(r"NIK—: (.+)", result) or re.search(r"NIK :(.+)", result) or re.search(r"NIK : (.+)", result) or re.search(r"NIK \| (.+)", result)
     if nik_match:
         nik = nik_match.group(1)
 
-    nama_match = re.search(r"Nama - (.+)", result) or re.search(r"Nama : (.+)", result)
+    nama_match = re.search(r"Nama - (.+)", result) or re.search(r"Nama : (.+)", result) or re.search(r"Nama '(.+)", result) or re.search(r"Nama: (.+)", result) or re.search(r"Nama—: (.+)", result) or re.search(r"Nama :(.+)", result) or re.search(r"Nama '(.+)", result) or re.search(r"Nama (.+)", result)
     if nama_match:
         nama = nama_match.group(1)
 
-    ttl_match = re.search(r"TemparTgiLahir - (.+)", result) or re.search(r"TempatTgi Lahir (.+)", result)
+    ttl_match = re.search(r"TemparTgiLahir - (.+)", result) or re.search(r"TempatTgi Lahir (.+)", result) or re.search(r"Tempat'Tgi Lahir : (.+)", result) or re.search(r"TempatTgi Lahir :(.+)", result) or re.search(r"TempatTgi Lahir '(.+)", result) or re.search(r"TempatTgi Lahir—: (.+)", result) or re.search(r"TempatTgi Lahir: (.+)", result) or re.search(r"Tempat/Tgi Lahir: (.+)", result) or re.search(r"Tempat/Tgi Lahir : (.+)", result) or re.search(r"Tempat/Tgi Lahir '(.+)", result) or re.search(r"Tempat/Tgi Lahir—: (.+)", result) or re.search(r"Tempat/Tgi Lahir :(.+)", result) or re.search(r"lempavTgi Lahir : (.+)", result)
     if ttl_match:
         tempatTglLahir = ttl_match.group(1).strip()
 
-    jk_match = re.search(r"Jenis kelamin :(.+?)\s*Gol\. Darah", result) or re.search(r"Jenis kelamun :(.+?)\s*Gol\b", result)
+    jk_match = re.search(r"Jenis kelamin :(.+?)\s*Gol\. Darah", result) or re.search(r"Jenis kelamun :(.+?)\s*Gol\b", result) or re.search(r"Jeris kelarmn (.+?)\s*Gol\b", result) or re.search(r"Jenis kelamin : (.+?)\s*Gol\b", result) or re.search(r"Jenis kelamin (.+?)\s*Gol\b", result)
     if jk_match:
         jenisKelamin = jk_match.group(1).strip()
     
-    gd_match = re.search(r"Gol\. Darah :(.+)", result) or re.search(r"Gol. Darah '(.+)", result)
+    gd_match = re.search(r"Gol\. Darah :(.+)", result) or re.search(r"Gol. Darah '(.+)", result) or re.search(r"Gol. Darah :(.+)", result) or re.search(r"Gol. Darah—: (.+)", result) or re.search(r"Gol. Darah: (.+)", result) or re.search(r"Gol. Darah : (.+)", result)
     if gd_match:
         golDarah = gd_match.group(1).strip()
 
-    alamat_match = re.search(r"Alamat : (.+)", result)
+    alamat_match = re.search(r"Alamat : (.+)", result) or re.search(r"Alamat (.+)", result) or re.search(r"Alamat '(.+)", result) or re.search(r"Alamat :(.+)", result) or re.search(r"Alamat—: (.+)", result) or re.search(r"Alamat: (.+)", result) or re.search(r"Alamat : (.+)", result)
     if alamat_match:
         alamat = alamat_match.group(1).strip()
 
-    rtrw_match = re.search(r"RT/RW : (.+)", result)
+    rtrw_match = re.search(r"RT/RW : (.+)", result) or re.search(r"RT/RW 1 (.+)", result) or re.search(r"RTRW (.+)", result) or re.search(r"RTRW : (.+)", result) or re.search(r"RT/RW (.+)", result) or re.search(r"RT/RW :(.+)", result) or re.search(r"RT/RW: (.+)", result)
     if rtrw_match:
         rtRw = rtrw_match.group(1).strip()
 
-    kel_desa_match = re.search(r"Kel/Desa - (.+)", result) or re.search(r"KeWWesa : (.+)", result)
+    kel_desa_match = re.search(r"Kel/Desa - (.+)", result) or re.search(r"KeWWesa : (.+)", result) or re.search(r"Kel/Desa : (.+)", result) or re.search(r"Kel Desa (.+)", result) or re.search(r"Kel/Desa :(.+)", result) or re.search(r"Kel/Desa—: (.+)", result) or re.search(r"Kel/Desa: (.+)", result) or re.search(r"Kel/bLesa: (.+)", result) or re.search(r"Kel/bLesa : (.+)", result)
     if kel_desa_match:
         kelDesa = kel_desa_match.group(1).strip()
 
-    kecamatan_match = re.search(r"Kecamatan . (.+)", result) or re.search(r"Kecamatan — :(.+)", result)
+    kecamatan_match = re.search(r"Kecamatan . (.+)", result) or re.search(r"Kecamatan — :(.+)", result) or re.search(r"Kecamatan : (.+)", result) or re.search(r"Kecamatan :(.+)", result) or re.search(r"Kecamatan: (.+)", result)
     if kecamatan_match:
         kecamatan = kecamatan_match.group(1).strip()
 
-    agama_match = re.search(r"Agama : (.+)", result) or re.search(r"Agama “ (.+)", result)
+    agama_match = re.search(r"Agama : (.+)", result) or re.search(r"Agama “ (.+)", result) or re.search(r"Agama (.+)", result) or re.search(r"Agama :(.+)", result) or re.search(r"Agama—: (.+)", result) or re.search(r"Agama: (.+)", result)
     if agama_match:
         agama = agama_match.group(1).strip()
 
-    status_kawin_match = re.search(r"Status Perkawinan: (.+)", result) or re.search(r"Status Perkawman . (.+)", result)
+    status_kawin_match = re.search(r"Status Perkawinan: (.+)", result) or re.search(r"Status Perkawman . (.+)", result) or re.search(r"Status Perkawman (.+)", result) or re.search(r"Status Perkawinan : (.+)", result) or re.search(r"Status Perkawinan :(.+)", result) or re.search(r"Status Perkawinan—: (.+)", result) or re.search(r"Status Perkawinan (.+)", result) or re.search(r"Status Perkawinan. (.+)", result)
     if status_kawin_match:
         statusPerkawinan = status_kawin_match.group(1).strip()
 
-    pekerjaan_match = re.search(r"Pekerjaan (.+)", result) or re.search(r"Pekerjaan : (.+)", result)
+    pekerjaan_match = re.search(r"Pekerjaan (.+)", result) or re.search(r"Pekerjaan : (.+)", result) or re.search(r"Pekerjaan :(.+)", result) or re.search(r"Pekerjaan—: (.+)", result) or re.search(r"Pekerjaan: (.+)", result)
     if pekerjaan_match:
         pekerjaan = pekerjaan_match.group(1).strip()
 
-    kewarganegaraan_match = re.search(r"Kewarganegaraan: (.+)", result) or re.search(r"Kewarganegaraan . (.+)", result)
+    kewarganegaraan_match = re.search(r"Kewarganegaraan: (.+)", result) or re.search(r"Kewarganegaraan . (.+)", result) or re.search(r"Kewarganegaraan : (.+)", result) or re.search(r"Kewarganegaraan :(.+)", result) or re.search(r"Kewarganegaraan—: (.+)", result) or re.search(r"Kewarganegaraan '(.+)", result) or re.search(r"Kewarganegaraan (.+)", result)
     if kewarganegaraan_match:
         kewarganegaraan = kewarganegaraan_match.group(1).strip()
 
-    berlaku_hingga_match = re.search(r"Berlaku Hingga (.+)", result) or re.search(r"Berlaku Hingga : (.+)", result)
+    berlaku_hingga_match = re.search(r"Berlaku Hingga (.+)", result) or re.search(r"Berlaku Hingga : (.+)", result) or re.search(r"Berlaku Hingga :(.+)", result) or re.search(r"Berlaku Hingga: (.+)", result) or re.search(r"Berlaku Hingga—: (.+)", result) or re.search(r"Berlaku Hingga ' (.+)", result) or re.search(r"Berlaku Hingga\": (.+)", result)
     if berlaku_hingga_match:
         berlakuHingga = berlaku_hingga_match.group(1).strip()
 
